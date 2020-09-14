@@ -1,5 +1,5 @@
 # NumberPad prototype
 
-John Schiltz
+John Schiltz  
 Code for NumberPad V0.1
 
