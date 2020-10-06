@@ -23,13 +23,13 @@ typedef struct
 	unsigned char DS;	// Serial Data Input			| Active HIGH
 }S74HC595_pins;
 
-unsigned int write_register(S74HC595 *reg_s, S74HC595_pins *pin_s);
-unsigned int clear_register(S74HC595 *reg_s, S74HC595_pins *pin_s);
+unsigned int write_register(unsigned char _DS, S74HC595_pins *pin_s);
+unsigned int clear_register(S74HC595_pins *pin_s);
 unsigned int shift_register(S74HC595_pins *pin_s);
-unsigned int show_register(S74HC595 *reg_s, S74HC595_pins *pin_s);
-unsigned int hide_register(S74HC595 *reg_s, S74HC595_pins *pin_s);
+unsigned int show_register(S74HC595_pins *pin_s);
+unsigned int hide_register(S74HC595_pins *pin_s);
 
-unsigned int write_bit(unsigned char *bit, S74HC595_pins *pin_s);
+unsigned int write_bit(unsigned char _DS, S74HC595_pins *pin_s);
 unsigned int write_byte(unsigned char *byte, S74HC595_pins *pin_s);
 
 

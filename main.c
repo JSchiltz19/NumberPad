@@ -1,5 +1,6 @@
 
 #include "src/74HC595.h"
+#include "src/scan.h"
 
 /*
  * D3	D4	D5	D6	|
@@ -21,8 +22,14 @@
  * Vcc--_2	MR?
 */
 
+/*************************Personal Macros*************************************/
+#define NUM_OF_COLUMS 4
+#define NUM_OF_ROWS 6
+
 int _main()
 {
-
-
+	unsigned int pins[] = {6, 5, 4, 3}; 
+	keyboard keyboard_s = keyboard_init(pins, NUM_OF_COLUMS, NUM_OF_ROWS);	
+	
 }
+

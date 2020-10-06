@@ -24,14 +24,18 @@ typedef struct
 }S74HC595_pins
 */
 
-unsigned int write_register(S74HC595 *reg_s, S74HC595_pins *pin_s)
+unsigned int write_bit(unsigned char _DS, S74HC595_pins *pin_s)
 {
 	unsigned int ret = 0;
-	digitalWrite(pin_s->DS, reg_s->DS);
+	if(_DS != 0 || _DS !=1)
+	{
+		return ++ret;
+	}
+	digitalWrite(pin_s->DS, _DS);
 	clock_shcp(pin_s);
 	return ret;
 }
-unsigned int clear_register(S74HC595 *reg_s, S74HC595_pins *pin_s)
+unsigned int clear_register(S74HC595_pins *pin_s)
 {
 	unsigned int ret = 0;
 	digitalWrite(pin_s->MR, 0);
@@ -46,46 +50,32 @@ unsigned int shift_register(S74HC595_pins *pin_s)
 	return ret;
 }
 
-unsigned int show_register(S74HC595 *reg_s, S74HC595_pins *pin_s)
+unsigned int show_register(S74HC595_pins *pin_s)
 {
 	unsigned int ret = 0;
 	digitalWrite(pin_s->OE, 0);
 	return ret;
 }
 
-unsigned int hide_register(S74HC595 *reg_s, S74HC595_pins *pin_s)
+unsigned int hide_register(S74HC595_pins *pin_s)
 {
 	unsigned int ret = 0;
 	digitalWrite(pin_s->OE, 1);
 	return ret;
 }
 
-// This is practically the same as write_register except it takes a bit instead
-// of the S94HC595 struct
-unsigned int w_rite_bit(unsigned char bit, S74HC595_pins *pin_s)
-{
-	unsigned int ret = 0;
-	if(bit == 0 || bit == 1)
-	{
-		S74HC595 reg_s;
-		reg_s.MR = 1;
-		reg_s.SHCP = 0;
-		reg_s.STCP = 0;
-		reg_s.OE = 1;
-		reg_s.DS = bit;
-		write_registers(&reg_s, pin_s);
-		return ret;
-	}
-	else
-	{
-		++ret;
-		return ret;
-	}
-}
-
+// Shifts in the least significant bit first
 unsigned int w_rite_byte(unsigned char byte, S74HC595_pins *pin_s)
 {
 	unsigned int ret = 0;
+
+	unsigned char _DS = 0;
+	int bit_pos;
+	for(bit_pos = 0; bit_pos < sizeof(byte); bit_pos++)
+	{
+		_DS = ((1 << bit_pos) | byte) >> bit_pos;
+		ret += write_register(_DS, pin_s);
+	}
 
 	return ret;
 }
