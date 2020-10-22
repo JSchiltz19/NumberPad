@@ -1,5 +1,5 @@
 
-#include "src/74HC595.h"
+//#include "src/74HC595.h"
 #include "src/scan.h"
 
 /*
@@ -20,10 +20,10 @@
  * Gnd--!	OE?
  * Vcc--Vcc
  * Vcc--_2	MR?
-*/
+ */
 
 /*************************Personal Macros*************************************/
-#define NUM_OF_COLUMS 4
+#define NUM_OF_COLUMNS 4
 #define NUM_OF_ROWS 6
 
 #define MR 0 //connected to vcc (_2 on datasheet)
@@ -32,47 +32,52 @@
 #define OE 0 //connected to gnd (! on datasheet)
 #define DS 8
 
-#define UPDATE_PERIOD 200	//Update period for scanning
+#define UPDATE_PERIOD 100	//Update period for scanning
 /*************************Personal Variables**********************************/
 unsigned int old_millis = 0;
-
-void printBits(size_t const size, void const * const ptr)
-{
-    unsigned char *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int j;
-    size_t i;
-    for (i = size-1; i >= 0; i--) {
-        for (j = 7; j >= 0; j--) {
-            byte = (b[i] >> j) & 1;
-            Serial.print(byte);
-        }
-    }
-    Serial.print("\n");
-}
+unsigned int pins[] = {3, 4, 5, 6}; 
 
 void setup(){
-	Serial.begin(9600);
-	pinMode(LED_BUILTIN,OUTPUT);
+	Serial.begin(9600); //Begin Serial
+	while(!Serial);
 
-	unsigned int pins[] = {6, 5, 4, 3}; 
-	keyboard keyboard_s = keyboard_init(pins, NUM_OF_COLUMS, NUM_OF_ROWS);	
+	pinMode(LED_BUILTIN, OUTPUT); //Set LED pinmode
 
-	S74HC595_pins pin_s = init_pins(MR, SHCP, STCP,  OE, DS);
+	delay(2000);	//Wait a bit
+
+	keyboard keyboard_s = keyboard_init(pins, NUM_OF_COLUMNS, NUM_OF_ROWS);	//Initiate keyboard struct
+	if(&keyboard_s == NULL)
+	{
+		Serial.println("keyboard = NULL");
+		while(1);
+	}
+	S74HC595_pins pin_s = init_pins(MR, SHCP, STCP,  OE, DS);	//Initiate pins struct and pin modes
+	if(&pin_s == NULL)
+	{
+		Serial.println("Pins = NULL");
+		while(1);
+	}
 
 	while(true)
 	{
-		unsigned int current_time = (unsigned int)(millis() - old_millis);
-		if(current_time >= UPDATE_PERIOD)
+		int error = 0;
+		unsigned int current_time = (unsigned int)(millis() - old_millis);	//Get current time
+		if(current_time >= UPDATE_PERIOD)	//Run keyscan at every Update Period
 		{
-			keyboard_s.keystate = 0;
-			scan(&keyboard_s, &pin_s);
 
-			//printBits(sizeof(keyboard_s.keystate), &(keyboard_s.keystate));
-			Serial.println(keyboard_s.keystate, BIN);
-			//Serial.print("   ");
- 			//Serial.println(current_time);
-				
+			clear_keyboard(&keyboard_s);
+
+			error += scan(&keyboard_s, &pin_s); // Calls scan.h
+
+			print_keyboard(&keyboard_s);
+
+			if(error > 0)
+			{
+				Serial.print("Error = ");
+				Serial.println(error);
+				break;
+			}
+
 			old_millis = millis();
 		}
 	}
@@ -80,7 +85,5 @@ void setup(){
 
 
 void loop(){
-
-
-
 }
+

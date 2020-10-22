@@ -17,3 +17,4 @@ upload: build/$(current-project).ino.hex
 
 clean: build
 	rm -r build
+	rm -r /tmp/arduino-sketch*
