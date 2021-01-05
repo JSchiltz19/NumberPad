@@ -32,7 +32,7 @@
 #define OE 0 //connected to gnd (! on datasheet)
 #define DS 8
 
-#define UPDATE_PERIOD 100	//Update period for scanning
+#define UPDATE_PERIOD 1000	//Update period for scanning
 /*************************Personal Variables**********************************/
 unsigned int old_millis = 0;
 unsigned int pins[] = {3, 4, 5, 6}; 
@@ -45,6 +45,30 @@ void setup(){
 
 	delay(2000);	//Wait a bit
 
+	digitalWrite(pins[0], LOW);
+	digitalWrite(pins[1], LOW);
+	digitalWrite(pins[2], LOW);
+	digitalWrite(pins[3], LOW);
+	pinMode(pins[0], INPUT);
+	pinMode(pins[1], INPUT);
+	pinMode(pins[2], INPUT);
+	pinMode(pins[3], INPUT);
+	while(true){
+		digitalWrite(DS,HIGH);
+		delay(10);
+		Serial.println("CLock IN");
+		for(int i = 0; i <8; i++){
+			digitalWrite(SHCP, HIGH);
+			delay(100);
+			digitalWrite(SHCP, LOW);
+			delay(100);
+		}	
+		Serial.println("Storage Clock");
+		digitalWrite(STCP, HIGH);
+		delay(100);
+		digitalWrite(STCP, LOW);
+		delay(100);
+	}
 	keyboard keyboard_s = keyboard_init(pins, NUM_OF_COLUMNS, NUM_OF_ROWS);	//Initiate keyboard struct
 	if(&keyboard_s == NULL)
 	{

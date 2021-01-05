@@ -3,6 +3,9 @@
 #include <math.h>
 #include <stdint.h>
 
+
+#define H_SCAN_DELAY 100
+
 keyboard keyboard_init(unsigned int *_pins, unsigned int _num_of_columns, unsigned int _num_of_rows)
 {
 	keyboard keyboard_s;
@@ -37,15 +40,14 @@ int scan(keyboard *keyboard_s, S74HC595_pins *pin_s)
 		ret += write_byte(reg, pin_s);
 		update_output(pin_s);
 
-		/*
 		Serial.print("reg = ");
 		Serial.println(reg, BIN);
-		*/
+		
 
 		for(column = 0; column < keyboard_s->num_of_columns; column++)
 		{
 			keyboard_s->keystate[column + (row * keyboard_s->num_of_columns)] = digitalRead(keyboard_s->pins[column]);
-			delay(1);
+			delay(H_SCAN_DELAY);
 		}
 		
 		reg = reg >> 1;

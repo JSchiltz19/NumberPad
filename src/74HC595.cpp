@@ -105,6 +105,7 @@ unsigned int shift_register(S74HC595_pins *pin_s)
 	if(pin_s == NULL) return ret + 1;
 
 	digitalWrite(pin_s->SHCP,0);
+	delayMicroseconds(1);
 	digitalWrite(pin_s->SHCP,1);
 	delayMicroseconds(1);
 	digitalWrite(pin_s->SHCP,0);
